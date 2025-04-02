@@ -195,6 +195,7 @@ describe("update()", () => {
     bucketmap.set(1, new Set([]));
     bucketmap.set(2, new Set([card]));
     let updated = update(bucketmap, card, 1);
+    console.log(updated);
     assert(updated.get(1)?.has(card));
   });
 });

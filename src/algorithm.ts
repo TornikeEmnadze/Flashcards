@@ -96,31 +96,43 @@ export function update(
   card: Flashcard,
   difficulty: AnswerDifficulty
 ): BucketMap {
+  let newBuckets = new Map(buckets);
+  let temp=-1;
 
-  let temp=0;
-  if(difficulty==0){
-    buckets.set(0,new Set([card]));
-  }
-  else 
-  if(difficulty==2){
-    buckets.forEach((value,key)=>{
-      if(value.has(card)){
-        temp=key;      }
-    })
-    buckets.set(temp+1,new Set([card]));
-  }
-  else 
-  if(difficulty==1){
-    buckets.forEach((value,key)=>{
-      if(value.has(card)){
-        temp=key;      }
-    })
-    if(temp!=0){
-      buckets.set(temp-1,new Set([card]));
+  for (const [bucketNum, cards] of buckets.entries()) {
+    const newSet = new Set<Flashcard>(cards);
+    newBuckets.set(bucketNum, newSet);
+
+    if (cards.has(card)) {
+      temp = bucketNum;
     }
   }
 
-  return buckets;
+  // Remove the card from its current bucket
+  if (temp !== -1) {
+    const currentSet = newBuckets.get(temp);
+    if (currentSet) {
+      currentSet.delete(card);
+    }
+  }
+
+  if(difficulty==0){
+    newBuckets.set(0,new Set([card]));
+  }
+  else 
+  if(difficulty==2){
+    newBuckets.set(temp+1,new Set([card]));
+  }
+  else 
+  if(difficulty==1){
+    if(temp!=0){
+      newBuckets.set(temp-1,new Set([card]));
+    }
+  }
+
+  
+
+  return newBuckets;
 }
 
 /**
